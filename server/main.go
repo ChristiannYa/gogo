@@ -10,6 +10,8 @@ import (
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"github.com/rs/cors"
+
+	"go-intro/server/routes"
 )
 
 func init() {
@@ -37,20 +39,7 @@ func main() {
 		Debug:            true, // Enable debugging for testing, consider disabling in production
 	})
 
-	const user = "chris"
-
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello, you've requested: %s\n", r.URL.Path)
-	})
-
-	mux.HandleFunc("/user", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello, you've requested the %s's user data", user)
-	})
-
-	mux.HandleFunc("/db-version", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "The database  version is: %s\n", version)
-	})
+	mux := routes.SetupRoutes(version)
 
 	// Wrap the handler with the CORS middleware
 	handler := corsMiddleware.Handler(mux)
